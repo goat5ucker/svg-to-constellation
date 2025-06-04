@@ -12,110 +12,125 @@ using namespace tinyxml2;
 //           `"Y8ba,   """"""""  8b       d8  88       88    88     
 //          aa    ]8I            "8a,   ,a8"  "8a,   ,a88    88,    
 //          `"YbbdP"'             `"YbbdP"'    `"YbbdP'Y8    "Y888  
-            // С‡РёС‚Р°Р№ РєР°Рє sh!t-out (Р·Р°РґСѓРјС‹РІР°Р»РѕСЃСЊ РєР°Рє sub-out)
-                // С‚СѓС‚ РїСЂРѕСЃС‚Рѕ РїРѕРґ-С„СѓРЅРєС†РёРё РґР»СЏ out_from_path
+            // читай как sh!t-out (задумывалось как sub-out)
+                // тут просто под-функции для out_from_path
 
 struct d_tkn_tmplt {
     char cmd;
     std::vector<double> digts; 
 };
-std::vector<d_tkn_tmplt> buf_d_tokens; // РќР• Р—РђР‘Р«Р’РђР™ РћР§РР©РђРўР¬ Р‘РЈР¤Р•Р  РўРћРљР•РќРћР’
+std::vector<d_tkn_tmplt> buf_d_tokens; // НЕ ЗАБЫВАЙ ОЧИЩАТЬ БУФЕР ТОКЕНОВ
 
+/// @brief токенизирует  d_string, в который ты передаёшь
+/// @param d_strng - строка с параметрами элемента d из path
 void path_d_token_extractor(std::string d_strng)
 {
 
     size_t _counter = 0;
     size_t _d_size = d_strng.size();
+    bool second_dot = false;
 
     while (_counter < _d_size)
     {
-            // РїСЂРѕРїСѓСЃРє РїСЂРѕР±РµР»РѕРІ
+            // пропуск пробелов
         while (_counter < _d_size
             && std::isspace(static_cast<unsigned char>(d_strng[_counter])))
                 { _counter++; }
-            // РµСЃР»Рё РґРѕС€Р»Рё РґРѕ РєРѕРЅС†Р° РґР°РЅРЅС‹С… - РїСЂРµСЂРІР°С‚СЊ С‡С‚РµРЅРёРµ
+            // если дошли до конца данных - прервать чтение
         if (_counter >= _d_size) break;
 
-            // РµСЃР»Рё СЃРёРјРІРѕР»РѕРј РѕРєР°Р·Р°Р»Р°СЃСЊ РЅРµ Р±СѓРєРІР° - С‚Рѕ РІС‹РІР°Р»РёС‚СЊСЃСЏ РІ РѕС€РёР±РєСѓ РЅР°!СѓР№
+            // если символом оказалась не буква - то вывалиться в ошибку на!уй
         if (!(std::isalpha(static_cast<unsigned char>(d_strng[_counter]))))
         {
-            std::cout << "  --РЇ Р–Р”РђР› РљРћРњРђРќР”РЈ Р’ РЎРРњР’РћР›Р• РќРћРњР•Р " << _counter << ", '" << d_strng << "'" << std::endl;
+            std::cout << "  --I WAS WAITING A COMMAND IN SYMBOL NUMBER " << _counter << ", DUMPING THE WHOLE STRING: '" << d_strng << "'" << std::endl;
             break;
         }
 
-            // Р·Р°СЃРїР°РІРЅРёР» РЅРѕРІС‹Р№ Р±СѓС„РµСЂРЅС‹Р№ С‚РѕРєРµРЅ
+            // заспавнил новый буферный токен
         d_tkn_tmplt _token_buf;
-        _token_buf.cmd = d_strng[_counter++];
-        
-        // РЅР° СЌС‚РѕРј СЌС‚Р°РїРµ РѕС‚СЂР°Р±РѕС‚Р°РЅС‹ РІРѕР·РјРѕР¶РЅС‹Рµ РѕС€РёР±РєРё Рё РїСЂРѕР±Р»РµРјС‹ РїСЂРё РїР°СЂСЃРёРЅРіРµ РґР°РЅРЅС‹С…,
-            // РґРµР»Р°СЋ С‡С‚РµРЅРёРµ Рё Р·Р°РїРёСЃСЊ РІ Р·Р°СЃРїР°РІРЅРµРЅРЅС‹Р№ _С‚РѕРєРµРЅ_Р±СѓС„РµСЂ
+            // записываем команду в токенбуфер и обновляем счётчик
+        _token_buf.cmd = d_strng[_counter];
+        _counter++;
+
+        // на этом этапе отработаны возможные ошибки и проблемы при парсинге данных,
+            // делаю чтение и запись чисел в заспавненный _токен_буфер
         while (_counter < _d_size)
         {
-                // РёРіРЅРѕСЂРёСЂРѕРІР°РЅРёРµ РїСЂРѕР±РµР»РѕРІ Рё Р·Р°РїСЏС‚С‹С…
+                // игнорирование пробелов и запятых
             while (_counter < _d_size
                 && (std::isspace(static_cast<unsigned char>(d_strng[_counter]))
                 || d_strng[_counter] == ','))
                     { _counter++; }
-
+                // break'аем, если счётчик перевалил за размер d_strng (ака _d_size)
             if (_counter >= _d_size) break;
 
-                // РµСЃР»Рё С‡РёС‚Р°РµРјС‹Р№ СЃРёРјРІРѕР» СЏРІР»СЏРµС‚СЃСЏ Р±СѓРєРІРѕР№ - С‚Рѕ СЃС‡РёС‚Р°С‚СЊ РµРіРѕ РІ Р±СѓС„РµСЂ С‚РѕРєРµРЅР°
+                // если читаемый символ является буквой - то break'нуть цикл
             if (std::isalpha(static_cast<unsigned char>(d_strng[_counter]))) break;
 
-                // СЃС‡РёС‚Р°С‚СЊ РЅРѕРјРµСЂ СЃРёРјРІРѕР»Р° РІ d_strng[_counter], РіРґРµ РЅР°С‡РёРЅР°РµС‚СЃСЏ С‡РёСЃР»Рѕ
+                // считать номер символа в d_strng[_counter], где начинается число
             size_t _num_start = _counter;
 
-                // С‡РёСЃР»Рѕ РјРѕР¶РµС‚ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ '-' РёР»Рё СЃ '+' РёР»Рё СЃ '.' РёР»Рё СЃ С†РёС„СЂС‹. РµСЃР»Рё СЌС‚Рѕ С‚Р°Рє - С‚Рѕ РёС‰РµРј С‡РёСЃР»Рѕ
+                // число может начинаться с '-' или с '+' или с '.' или с цифры. если это так - то просто обновляем счётчик
             if (d_strng[_counter] == '-'
                 || d_strng[_counter] == '+'
                 || d_strng[_counter] == '.'
                 || std::isdigit(static_cast<unsigned char>(d_strng[_counter]))
                 )
             {
-                    // СѓРїРѕС‚СЂРµР±Р»РµРЅРёРµ РІ Р±СѓС„РµСЂ РїРµСЂРІРѕРіРѕ СЃРёРјРІРѕР»Р° РЅР°С‡РёРЅР°РµС‚СЃСЏ СЃ РѕР±РЅРѕРІР»РµРЅРёСЏ СЃС‡С‘С‚С‡РёРєР°
+                    // употребление в буфер первого символа начинается с обновления счётчика
                 _counter++;
 
-                    // РѕР±РЅРѕРІР»РµРЅРёРµ СЃС‡С‘С‚С‡РёРєР° Р·Р°РєР°РЅС‡РёРІР°РµС‚СЃСЏ С‚РѕРіРґР°,
-                        // РєРѕРіРґР° С‡РёС‚Р°РµРјС‹Р№ СЃРёРјРІРѕР» РЅРµ СЏРІР»СЏРµС‚СЃСЏ С†РёС„СЂРѕР№ РёР»Рё С‚РѕС‡РєРѕР№
+                    // обновление счётчика заканчивается тогда,
+                        // когда читаемый символ не является цифрой или точкой
                             //
-                            // СЌС‚Рё С€РёР·РѕС„СЂРµРЅРёРєРё Р±Р»СЏС‚СЊ (РєР°Рє Рё СЏ, РІРїСЂРёРЅС†РёРїРµ) СЃРґРµР»Р°Р»Рё С‚Р°Рє, С‡С‚Рѕ С‡РёСЃР»Рѕ РјРѕР¶РЅС‚ РЅР°С‡РёРЅР°С‚СЊСЃСЏ СЃ С‚РѕС‡РєРё.
-                            // СЏ РЅРµ РјРѕРі РїРѕРЅСЏС‚СЊ, РїРѕС‡РµРјСѓ Сѓ РјРµРЅСЏ РїСЂРё С‡С‚РµРЅРёРё РЅРµРєРѕС‚РѕСЂС‹С… Р°С‚С‚СЂРёР±СѓС‚РѕРІ РЅРµ РґРѕСЃС‚Р°С‘С‚ РѕРґРЅРѕР№ С‚РѕС‡РєРё, Р° РѕРЅРѕ РІРѕРЅ РѕРЅРѕ С‡С‚Рѕ... С‘-Рї-СЂ-СЃ-С‚...
+                            // эти шизофреники блять (как и я, впринципе) сделали так, что число можнт начинаться с точки.
+                            // я не мог понять, почему у меня при чтении некоторых аттрибутов не достаёт одного или двух чисел, а оно вон оно что... ё-п-р-с-т...
                             //
-                            // РїРѕРєР° С‡С‚Рѕ СЏ РЅРµ СЃРґРµР»Р°Р» РѕР±СЂР°Р±РѕС‚РєСѓ СЌС‚РѕР№ Р·Р»Рѕ!Р±СѓС‡РµР№ РІС‚РѕСЂРѕР№ С‚РѕС‡РєРё, СЌС‚Рѕ РѕСЃС‚Р°РІР»СЋ РґРµРґСѓ, РѕРЅ РґРѕРµСЃС‚...
+                            // пока что я не сделал обработку этой зло!бучей второй точки, это оставлю деду, он доест...
                             //
-                while (_counter < _d_size
-                    && (std::isdigit(static_cast<unsigned char>(d_strng[_counter]))
-                    || d_strng[_counter] == '.'))
-                        { _counter++; }
+                
+                bool found_dot = false;
+                while ( _counter < _d_size
+                        && (std::isdigit(static_cast<unsigned char>(d_strng[_counter]))
+                            || d_strng[_counter] == '.' )
+                      )
+                {
+                    // break-аем цикл, если обнаружили вторую точку (потому что в числе может быть только одна точка)
+                    if(d_strng[_counter] == '.' && found_dot)
+                        break;
+                    if(d_strng[_counter] == '.')
+                        found_dot = true;
+                    _counter++;
+                }
 
-                    // Р±РѕР»СЊС€Рµ Р±СѓС„РµСЂРѕРІ Р±РѕРіСѓ Р±СѓС„РµСЂРѕРІ -
-                    // РёСЃРїРѕР»СЊР·СѓСЏ Р·РЅР°С‡РµРЅРёСЏ _counter Рё _num_start СЃС‡РёС‚С‹РІР°РµРј С†РёС„СЂСѓ РІ Р±СѓС„РµСЂ _buf_double!
+                    // больше буферов богу буферов -
+                    // используя значения _counter и _num_start считываем цифру в буфер _buf_double!
                 std::string _buf_double = d_strng.substr(_num_start, _counter - _num_start);
-                    // РїСЂРѕР±СѓРµРј С‚СЂР°РЅСЃР»РёСЂРѕРІР°С‚СЊ Р·РЅР°С‡РµРЅРёРµ _buf_double РІ Р±СѓС„РµСЂ С‚РѕРєРµРЅР°
+                    // пробуем транслировать значение _buf_double в буфер токена
                 try
                 {
                     double val = std::stod(_buf_double);
                     _token_buf.digts.push_back(val);
                 }
-                    // Рё РѕР±СЂР°Р±Р°С‚С‹РІР°РµРј РѕС€РёР±РєСѓ, РµСЃР»Рё РєР°РєРёРј-С‚Рѕ РѕР±СЂР°Р·РѕРј РІ РєРѕРґРµ РµСЃС‚СЊ Р±Р°Рі Рё РІ buf_double Р·Р°Р»РµС‚РµР» РЅРµР»РµРіР°Р»СЊРЅС‹Р№ СЃРёРјРІРѕР»
+                    // и обрабатываем ошибку, если каким-то образом в коде есть баг и в buf_double залетел нелегальный символ
                 catch (...)
                 {
-                    std::cerr << "  --СЌС‚Рѕ С‡С‘, РЅРµ С†РёС„СЂР°?:  '" << _buf_double << "'\n";
+                    std::cout << "  --IT'S NOT A DIGIT IN COL. NO '" << _counter << "', INNIT?:  '" << _buf_double << "'\n";
                     break;
                 }
-            }   // Р·Р°РєР°РЅС‡РёРІР°РµРј СЃС‡РёС‚С‹РІР°С‚СЊ С‡РёСЃР»Рѕ.
+            }   // заканчиваем считывать число.
             else
             {
-                // РїСЂРё РЅРµРїСЂРѕРїРёСЃР°РЅРЅРѕРј СЃРёРјРІРѕР»Рµ РїСЂРѕСЃС‚Рѕ РЅР°С‡РёРЅР°РµРј Р·Р°РЅРѕРІРѕ РёСЃРєР°С‚СЊ С‡РёСЃР»Рѕ РёР»Рё Р±СѓРєРІСѓ
+                // при непрописанном символе просто начинаем заново искать число или букву
                 _counter++;
             }
         }
-            // РїСѓС€Р±СЌРє РїРѕР»СѓС‡РµРЅРЅРѕРіРѕ Р·РЅР°С‡РµРЅРёСЏ РІ С‚РѕРєРµРЅС‹!
+            // пушбэк полученного значения в токены!
         buf_d_tokens.push_back(_token_buf);
-    } // РЅР° СЌС‚РѕРј РјРѕРјРµРЅС‚Рµ РёР»Рё Р·Р°РЅРѕРІРѕ С€СѓСЂС€РёРј d_string, РёР»Рё РІС‹С…РѕРґРёРј, РµСЃР»Рё СЃС‡С‘С‚С‡РёРє РїРµСЂРµРІР°Р»РёР» Р·Р° СЃРІРѕР№ РїСЂРµРґРµР»
+    } // на этом моменте или заново шуршим d_string, или выходим, если счётчик перевалил за свой предел
 }
 
-    /// @brief РІРѕР·РІСЂР°С‰Р°РµС‚ true, РµСЃР»Рё Р±С‹Р»Р° РїСЂРѕРїРёСЃР°РЅР° РєРѕРјР°РЅРґР° 'z'/'Z'. РІ РѕСЃС‚Р°Р»СЊРЅС‹С… СЃР»СѓС‡Р°СЏС… - РІРѕР·РІСЂР°С‰Р°РµС‚ false;
+    /// @brief возвращает true, если была прописана команда 'z'/'Z'. в остальных случаях - возвращает false;
 bool path_d_instructions_interpreter(const char _instr, std::vector<double> coords, bool* found_line)
 {
     const char instr = tolower(_instr);
@@ -201,18 +216,19 @@ read:
         }
 
     default:
-        std::cout << "    --СЏ РЅРµ СЃРїРѕСЃРѕР±РµРЅ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РёРЅСЃС‚СЂСѓРєС†РёСЋ '" << instr << "', РёРіРЅРѕСЂРёСЂСѓСЋ" << std::endl; 
+        std::cout << "    --I CAN'T WORK WITH INSTRUCTION '" << instr << "', IGNORING..." << std::endl; 
     }
 
-    nothing_left = true;    // РїРѕ Р·Р°РґСѓРјРєРµ - СЌС‚Р° РёРЅСЃС‚СЂСѓРєС†РёСЏ РїСЂРѕРїСѓСЃС‚РёС‚СЃСЏ, РµСЃР»Рё РµС‰С‘ РѕСЃС‚Р°РЅСѓС‚СЃСЏ РєРѕРѕСЂРґРёРЅР°С‚С‹ РґР»СЏ РѕР±СЂР°Р±РѕС‚РєРё.
-                            // РІ СЃРІРёС‚С‡-РєРµР№СЃРµ РІС‹С€Рµ РµСЃС‚СЊ РґРёСЂРµРєС‚РёРІС‹ 'goto write;', РєРѕС‚РѕСЂС‹Рµ РІС‹Р·С‹РІР°СЋС‚СЃСЏ, РµСЃР»Рё РІ РІРµРєС‚РѕСЂРµ РѕСЃС‚Р°СЋС‚СЃСЏ СЌР»РµРјРµРЅС‚С‹;
+    nothing_left = true;    // по задумке - эта инструкция пропустится, если ещё останутся координаты для обработки.
+                            // в свитч-кейсе выше есть директивы 'goto write;', которые вызываются, если в векторе остаются элементы;
 
 write:
     bool _is_relative = !isupper(_instr);
     if(_is_relative && *found_line)
     {
+        std::cout << "    relative: " << _buf_coords.x << " / " << _buf_coords.y << std::endl;
         _buf_coords = _buf_coords + out_dots.back();
-        std::cout << "    rel-to-abs: '";
+        std::cout << "        rel-to-abs: '";
     }
     else
         std::cout << "    absolute  : '";
@@ -244,8 +260,8 @@ write:
 
 bool out_from_line(XMLElement* element)
 {
-    bool found = false;     // РїРѕ СЃСѓС‚Рё, РѕРЅ РґРѕР»Р¶РµРЅ РІРѕР·РІСЂР°С‰Р°С‚СЊ true, РµСЃР»Рё РѕРЅ РЅР°С€С‘Р» РєР°Рє РјРёРЅРёРјСѓРј РґРІРµ С‚РѕС‡РєРё.
-    found = true;           // РЅРѕ СЏ РїРёС€Сѓ СЌС‚РѕС‚ РєРѕРґ РІ 5 СѓС‚СЂР° Рё РјРЅРµ РїРѕРєР° С‡С‚Рѕ РґРёС‡Р°Р№С€Рµ Р»РµРЅСЊ Рё СЌС‚Рѕ РїСЂРѕРїРёСЃС‹РІР°С‚СЊ...
+    bool found = false;     // по сути, он должен возвращать true, если он нашёл как минимум две точки.
+    found = true;           // но я пишу этот код в 5 утра и мне пока что дичайше лень и это прописывать...
     std::vector<const char*> attr_names = {"x1","y1","x2","y2"};
     
     out_dots.push_back
@@ -274,54 +290,51 @@ bool out_from_polyline(XMLElement* element)
 {
     bool found = false;
 
-    std::istringstream iss((std::string)element->FindAttribute("points")->Value());  // РїРѕС‚РѕРє СЃРёРјРІРѕР»РѕРІ, РёР· РєРѕС‚РѕСЂРѕРіРѕ Р±СѓРґСѓС‚ РёР·РІР»РµРєР°С‚СЊСЃСЏ РєРѕРѕСЂРґРёРЅР°С‚С‹ С‚РѕС‡РµРє
-    std::string pair;  // Р±СѓС„С„РµСЂ РїРѕРґ РЅРµ-СЂР°Р·-РїР°СЂСЃРµРЅРЅСѓСЋ РєРѕРѕСЂРґРёРЅР°С‚Сѓ (РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ while-РѕРј)
+    std::istringstream iss((std::string)element->FindAttribute("points")->Value());  // поток символов, из которого будут извлекаться координаты точек
+    std::string pair;  // буффер под не-раз-парсенную координату (используется while-ом)
     while (iss >> pair)
     {
         std::istringstream pair_iss(pair);
         std::string x_str, y_str;
         if (std::getline(pair_iss, x_str, ',') && std::getline(pair_iss, y_str))
         {
-            gvec_2d v; // Р±СѓС„С„РµСЂ РїРѕРґ РєРѕРѕСЂРґРёРЅР°С‚Сѓ
-            try        // РїРѕРїСЂРѕР±РѕРІР°С‚СЊ Р±СѓС„С„РµСЂРёР·РёСЂРѕРІР°С‚СЊ С‚РµРєСѓС‰СѓСЋ С‚РѕС‡РєСѓ Рё РІРЅРµСЃС‚Рё РµС‘ РІ РІРµРєС‚РѕСЂ С‚РѕС‡РµРє
+            gvec_2d v; // буффер под координату
+            try        // попробовать буфферизировать текущую точку и внести её в вектор точек
             {
                 v.x = std::stod(x_str);
                 v.y = std::stod(y_str);
-                out_dots.push_back(v);  // РїСѓС€Р±СЌРє РІ РІРµРєС‚РѕСЂ С‚РѕС‡РµРє!
+                out_dots.push_back(v);  // пушбэк в вектор точек!
             }
             catch (const std::invalid_argument& err)
             {
-                std::cerr << "  --РѕС€РёР±РєР° РІ РїР°СЂСЃРёРЅРіРµ С‚РѕС‡РµРє: '" << pair << "' (" << err.what() << ")" << std::endl;
+                std::cerr << "  --ERROR WHILE PARSING POLYLINE: '" << pair << "' (" << err.what() << ")" << std::endl;
             }
 
             if(!found)
-                found = true;       // РЅР°С€С‘Р» СЃРІСЏР·СЊ РјРёРЅРёРјСѓРј РјРµР¶РґСѓ РґРІСѓРјСЏ С‚РѕС‡РєР°РјРё!
+                found = true;       // нашёл связь минимум между двумя точками!
             else
             {
-                // РґРѕР±Р°РІР»СЏСЋ РёРЅРґРµРєСЃ РІ РІРµРєС‚РѕСЂ РёРЅРґРµРєСЃРѕРІ
+                // добавляю индекс в вектор индексов
                 out_indx.push_back({ (unsigned long long)out_dots.size() - 2, (unsigned long long)out_dots.size() - 1 });
-                // РІС‹РІРѕР¶Сѓ РґРѕР±Р°РІР»РµРЅРЅС‹Рµ РёРЅРґРµРєСЃ Рё С‚РѕС‡РєСѓ:
+                // вывожу добавленные индекс и точку:
                 std::cout << "    dotNo" << out_indx[out_indx.size() - 1].a << "-dotNo" << out_indx[out_indx.size() - 1].b << ": x: '";
                 std::cout  << out_dots[out_dots.size() - 2 ].x << "' y: '" << out_dots[out_dots.size() - 2 ].y << "' / x: '";
                 std::cout << out_dots.back().x << "' y: '" << out_dots.back().y << std::endl;
             }
         }
     }
-
-    
-
     return found;
 }
                                                     
 bool out_from_path(XMLElement* element)
 {
-    bool found = false;     // РїРѕ СЃСѓС‚Рё, РѕРЅ РґРѕР»Р¶РµРЅ РІРѕР·РІСЂР°С‰Р°С‚СЊ true, РµСЃР»Рё РѕРЅ РЅР°С€С‘Р» РєР°Рє РјРёРЅРёРјСѓРј РґРІРµ С‚РѕС‡РєРё.
+    bool found = false;     // по сути, он должен возвращать true, если он нашёл как минимум две точки.
     
     if(element->FindAttribute("d") == NULL)
         return false;
 
     std::string wtf = element->FindAttribute("d")->Value();
-        // РїРµСЂРµРІРѕР¶Сѓ Р°С‚С‚СЂРёР±СѓС‚ d РІ СЂР°Р±РѕС‡РёР№ РІРµРєС‚СЊС‚РѕСЂ buf_d_tokens
+        // перевожу аттрибут d в рабочий вектьтор buf_d_tokens
     path_d_token_extractor(wtf);
 
     for (int i = 0; i < buf_d_tokens.size(); i++)
@@ -355,27 +368,27 @@ void handle_line_element(XMLElement* line)
 {   
     std::cout << "line: " << std::endl;
     if(!out_from_line(line))
-    {   std::cout << "    Р°С‚С‚СЂРёР±СѓС‚ РєРѕРѕСЂРґРёРЅР°С‚ РїСѓСЃС‚, РїСЂРѕРїСѓСЃРєР°СЋ" << std::endl; }
+    {   std::cout << "    coord attribute is empty, ignoring..." << std::endl; }
     else
-    {   std::cout << "    РЅР°С€С‘Р» РґР°РЅРЅС‹Рµ РІ Р°С‚С‚СЂРёР±СѓС‚Рµ \'line\'; Р·Р°РїРёСЃР°Р»;" << std::endl;    }
+    {   std::cout << "    found data in 'line';" << std::endl;    }
 }
 
 void handle_polyline_element(XMLElement* polyline)
 {
     std::cout << "polyline: " << std::endl;
     if(!out_from_polyline(polyline))
-    {   std::cout << "    Р°С‚С‚СЂРёР±СѓС‚ РєРѕРѕСЂРґРёРЅР°С‚ РїСѓСЃС‚, РїСЂРѕРїСѓСЃРєР°СЋ" << std::endl; }
+    {   std::cout << "    coord attribute is empty, ignoring..." << std::endl; }
     else
-    {   std::cout << "    РЅР°С€С‘Р» РґР°РЅРЅС‹Рµ РІ Р°С‚С‚СЂРёР±СѓС‚Рµ \'polyline\'; Р·Р°РїРёСЃР°Р»;" << std::endl;    }
+    {   std::cout << "    нашёл данные в аттрибуте \'polyline\'; записал;" << std::endl;    }
 }
 
 void handle_path_element(XMLElement* path)
 {
     std::cout << "path: " << std::endl;
     if(!out_from_path(path))
-    {   std::cout << "    Р°С‚С‚СЂРёР±СѓС‚ РєРѕРѕСЂРґРёРЅР°С‚ РїСѓСЃС‚, РїСЂРѕРїСѓСЃРєР°СЋ" << std::endl; }
+    {   std::cout << "    coord attribute is empty, ignoring..." << std::endl; }
     else
-    {   std::cout << "    РЅР°С€С‘Р» РґР°РЅРЅС‹Рµ РІ Р°С‚С‚СЂРёР±СѓС‚Рµ \'path\'; РѕС‚СЃС‚СЂР°РґР°Р»...;" << std::endl;    }
+    {   std::cout << "    found data in 'path';" << std::endl;    }
 
 }
 
@@ -401,7 +414,7 @@ void handle_g(XMLElement * group)
         else if(strcmp(name, "line") == 0)      handle_line_element(buf_childs[i]);
         else if(strcmp(name, "polyline") == 0)  handle_polyline_element(buf_childs[i]);
         else if(strcmp(name, "g") == 0)  {std::cout << "--nested "; handle_g(buf_childs[i]);}
-        else std::cout << "РЇ РќР• Р‘РЈР”РЈ РџРђР РЎРРўР¬ Р­Р›Р•РњР•РќРў '" << name << "' Р’ РЎРўР РћРљР• " << buf_childs[i]->GetLineNum() << std::endl;
+        else std::cout << "I WON'T PARSE ELEMENT '" << name << "' IN LINE No. " << buf_childs[i]->GetLineNum() << std::endl;
     }
     if (buf_childs.size() == 0)
     {
@@ -423,7 +436,7 @@ void handle_svg(XMLElement * group)
         else if(strcmp(name, "line") == 0)      handle_line_element(buf_childs[i]);
         else if(strcmp(name, "polyline") == 0)  handle_polyline_element(buf_childs[i]);
         else if(strcmp(name, "g") == 0)         handle_g(buf_childs[i]);
-        else std::cout << name << " РІ СЃС‚СЂРѕРєРµ " << buf_childs[i]->GetLineNum() << ": РёРіРЅРѕСЂРёСЂСѓСЋ." << std::endl;
+        else std::cout << name << " in line No. " << buf_childs[i]->GetLineNum() << " there is " << name << ": can't take it, ignoring..." << std::endl;
     }
     if (buf_childs.size() == 0)
     {
@@ -443,39 +456,10 @@ void run(std::string filepath)
     
     if(!(svg_file.LoadFile(filepath.c_str())))
     {
-        std::cout << "tinyxml2 РѕС‚РєСЂС‹Р» С„Р°Р№Р» РґР»СЏ С‡С‚РµРЅРёСЏ" << std::endl;
+        std::cout << "tinyxml2 opened the file for reading..." << std::endl;
         XMLElement* element_svg = svg_file.FirstChildElement("svg");
 
         handle_svg(element_svg);
-
-            // РїСЂРё РЅР°РїРёСЃР°РЅРёРё СЏ РґСѓРјР°Р», С‡С‚Рѕ РІСЃРµ РєРѕСЂРЅРµРІС‹Рµ СЌР»РµРјРµРЅС‚С‹ Р±СѓРґСѓС‚ РїРѕРґ g. РЅРѕ РІ СЃС‚Р°РЅРґР°СЂС‚Рµ SVG РЅРµ РІСЃС‘ С‚Р°Рє РїСЂРѕСЃС‚Рѕ...
-            // РёР·РЅР°С‡Р°Р»СЊРЅРѕ С‚СѓС‚ Р±С‹Р»Рѕ СЌС‚Рѕ. СѓРґР°Р»СЏС‚СЊ РјРЅРµ СЌС‚РѕС‚ РєРѕРґ Р¶Р°Р»РєРѕ. РїРѕСЌС‚РѕРјСѓ СЌС‚РѕС‚ РєРѕРјРјРµРЅС‚Р°СЂРёР№ СЃСѓС‰РµСЃС‚РІСѓРµС‚ С‚СѓС‚ РІ РїРµСЂРІСѓСЋ РѕС‡РµСЂРµРґСЊ.
-
-        // std::vector<XMLElement*> elements_g;
-
-        // for (tinyxml2::XMLElement* child = element_svg->FirstChildElement(); child != NULL; child = child->NextSiblingElement())
-        // {
-        //     if(strcmp(child->Name(), "g") == 0)
-        //     {
-        //         elements_g.push_back(child);
-        //         std::cout << " РІ СЃС‚СЂРѕРєРµ " << child->GetLineNum() << " РѕР±РЅР°СЂСѓР¶РёР» РєРѕСЂРЅРµРІРѕР№ СЌР»РµРјРµРЅС‚ \'g\'!" << std::endl;
-        //     }
-        //     else
-        //     {
-        //         std::cout << "РІ СЃС‚СЂРѕРєРµ " << child->GetLineNum() << " РїСЂРѕРїСѓСЃС‚РёР» СЌР»РµРјРµРЅС‚ \'" << child->Name() << "\'" << std::endl;
-        //     }
-        // }
-
-        // if(!(elements_g.size() > 0))
-        //     std::cout << "РЅРµ РѕР±РЅР°СЂСѓР¶РёР» СЌР»РµРјРµРЅС‚РѕРІ \'g\', РїСЂРѕРїСѓСЃРєР°СЋ С„Р°Р№Р»" << utils::filename_extractor(filepath) << std::endl;
-        // else 
-        // {                    
-        //     std::cout << "РІСЃРµРіРѕ СЌР»РµРјРµРЅС‚РѕРІ \'g\': " << elements_g.size() << std::endl << std::endl;
-        //     for (int i = 0; i < elements_g.size(); i++)
-        //     {
-        //         handle_g(elements_g[i]);
-        //     }
-        // }
     }
 }
 

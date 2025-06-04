@@ -34,12 +34,12 @@ namespace converter
     {
         stage::svg::run(filepath_in);
         std::cout << "\n----------\n" << std::endl;
-        std::cout <<  "считаны координаты точек:\n";
+        std::cout <<  "here's the coordinates of dots:\n";
         for(int i = 0; i < stage::svg::out_dots.size(); i++)
         {
             std::cout << i << ":  x: '" << stage::svg::out_dots[i].x << "' y: '" << stage::svg::out_dots[i].y << "'" << std::endl;
         }
-        std::cout << "\nсчитаны координаты индексов:\n";
+        std::cout << "\nhere's the indexes:\n";
         for(int i = 0; i < stage::svg::out_indx.size(); i++)
         {
             std::cout << i << ":  a: '" << stage::svg::out_indx[i].a << "' b: '" << stage::svg::out_indx[i].b << "'" << std::endl;
@@ -53,7 +53,7 @@ namespace converter
         stage::write::run(utils::filename_extractor(filepath_in), stage::align::out_dots, stage::svg::out_indx);
 
         stage::flush_();
-        std::cout << "\nконвертер завершил обрабатывать файл '" << utils::filename_extractor(filepath_in) << "';\n";
+        std::cout << "\nconverter finished working with '" << utils::filename_extractor(filepath_in) << "';\n";
         std::cout << "\n---------------------------------------------------------------------------\n" << std::endl;
         return 1;
     }

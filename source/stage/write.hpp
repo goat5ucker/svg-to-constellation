@@ -5,9 +5,9 @@
 
 void run(std::string filename, std::vector<gvec_2f> in_dots, std::vector<gvec_u2ll> in_indxs)
 {
-        // задаю путь выходного файла
-    std::string filepath = dirs::out_path + "\\" + filename + ".constellation";
-    std::cout << "записываю конвертированные данные в " << filepath << std::endl;
+        // ����� ���� ��������� �����
+    std::string filepath = dirs::out_path + "\\" + filename + ".constellation.txt";
+    std::cout << "writing the converted data in " << filepath << std::endl;
 
     std::ofstream file_out(filepath);
     file_out << "Constellation " << filename << "(\n";
@@ -23,5 +23,5 @@ void run(std::string filename, std::vector<gvec_2f> in_dots, std::vector<gvec_u2
     }
     file_out << "\n}\n);";
     file_out.close();
-    std::cout << "записал.. . :D" << std::endl;
+    std::cout << "finished writing.. . :D" << std::endl;
 }
