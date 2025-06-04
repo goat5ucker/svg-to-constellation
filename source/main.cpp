@@ -45,7 +45,7 @@ int main()
         converter::main(filelist[i]);
     }
 
-    std::cout << "конвертер завершает работу..." << std::endl;
+    std::cout << "converter is exiting with code 1: successful..." << std::endl;
 
     return 1;
 }

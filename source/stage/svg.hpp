@@ -131,7 +131,7 @@ void path_d_token_extractor(std::string d_strng)
 }
 
     /// @brief возвращает true, если была прописана команда 'z'/'Z'. в остальных случаях - возвращает false;
-bool path_d_instructions_interpreter(const char _instr, std::vector<double> coords, bool* found_line)
+void path_d_instructions_interpreter(const char _instr, std::vector<double> coords, bool* found_line, gvec_2d* _init_point)
 {
     const char instr = tolower(_instr);
     gvec_2d _buf_coords;
@@ -211,7 +211,9 @@ read:
         }
     case 'z':
         {
-            return true;
+            _buf_coords = *_init_point;
+            if(coords.size() > (offset+1))
+                goto write;
             break;
         }
 
@@ -242,10 +244,14 @@ write:
     }
     else
         *found_line = true;
+    if(instr == 'z')
+        *found_line = false;
+    if(instr == 'm')
+        *_init_point = _buf_coords;
 
     if(!nothing_left) goto read;
 
-    return false;
+    return;
 }
 
 //                                      ,d     
@@ -328,7 +334,7 @@ bool out_from_polyline(XMLElement* element)
                                                     
 bool out_from_path(XMLElement* element)
 {
-    bool found = false;     // по сути, он должен возвращать true, если он нашёл как минимум две точки.
+    bool found = false;     // буалеан для обработки соединений с линиями;
     
     if(element->FindAttribute("d") == NULL)
         return false;
@@ -337,17 +343,14 @@ bool out_from_path(XMLElement* element)
         // перевожу аттрибут d в рабочий вектьтор buf_d_tokens
     path_d_token_extractor(wtf);
 
+    gvec_2d _init_point = {0.f,0.f};
+
     for (int i = 0; i < buf_d_tokens.size(); i++)
     {
-        bool close_path = path_d_instructions_interpreter(buf_d_tokens[i].cmd,
-                                                            buf_d_tokens[i].digts,
-                                                            &found);
-        
-        
-        if(close_path)
-        {
-
-        }
+        path_d_instructions_interpreter(buf_d_tokens[i].cmd,
+                                        buf_d_tokens[i].digts,
+                                        &found, &_init_point);
+        found = false;
     }
 
     buf_d_tokens.clear();
