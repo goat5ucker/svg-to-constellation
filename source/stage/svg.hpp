@@ -1,5 +1,6 @@
 #pragma once
 
+
             std::vector<gvec_2d> out_dots;
             std::vector<gvec_u2ll> out_indx;
 

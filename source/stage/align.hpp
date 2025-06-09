@@ -1,6 +1,7 @@
 #pragma once
 
 
+
             std::vector<gvec_2f> out_dots;
             float alignment_factor = 5;
 
