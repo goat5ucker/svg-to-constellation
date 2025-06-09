@@ -1,8 +1,10 @@
-project(converter)
-
 cmake_minimum_required(VERSION 4.0)
 
+project(converter)
+
+
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ../compile)
+set (CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG ../compile/Debug)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)

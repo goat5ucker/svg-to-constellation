@@ -6,13 +6,13 @@
             "name": "Debug",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/compile/Debug/converter.exe",
+            "program": "${workspaceFolder}/compile/Debug/converter.exe", // поменяй этот элемент, если у тебя проект собирается в другую директорию (хз попробуй удалить "Debug")
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/compile",
             "environment": [],
             "externalConsole": false,
-            "MIMode": "gdb",
+            "MIMode": "gdb",            // ты не забыл установить дебаггер G++, когда устанавливал сам G++ / GCC ? 
             "miDebuggerPath": "gdb",
             "setupCommands":
             [

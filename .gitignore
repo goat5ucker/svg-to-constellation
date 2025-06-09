@@ -1,7 +1,7 @@
 Debug
 Release
 compile
-files
-input
 build
 .vs
+.svg
+.txt

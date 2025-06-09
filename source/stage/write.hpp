@@ -1,5 +1,4 @@
 #pragma once
-#include "utils.hpp"
 
 
 void run(std::string filename, std::vector<gvec_2f> in_dots, std::vector<gvec_u2ll> in_indxs)

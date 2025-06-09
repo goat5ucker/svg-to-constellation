@@ -49,7 +49,6 @@ int main()
     // задаю вектор со списком файлов:
     std::vector<std::string> filelist;
 
-read:
     // считываю файлы оттуда:
     for (const auto & entry : std::filesystem::directory_iterator(dirs::in_path))
     {
