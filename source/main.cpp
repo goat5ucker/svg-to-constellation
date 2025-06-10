@@ -78,6 +78,18 @@ int main()
     }
     std::cout<< ";\n";
 
+read_maxwell:
+    float maxwell = converter::stage::align::alignment_factor;
+    std::cout << "Now, enter your desired maximum values here: "; std::cin >> maxwell; std::cout << std::endl;
+    if(std::cin.fail())
+    {
+        std::cin.clear(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+        goto read_maxwell;
+    }
+    std::cin.clear(); std::cin.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    std::cout << "your alignment factor is: " << maxwell << std::endl;
+    converter::stage::align::alignment_factor = maxwell;
+
     std::cout << "ready to convert files one-by-one from " << dirs::in_path << " into .constellation.txt; ";
 
     for (int i = 0; i < filelist.size(); i++)
