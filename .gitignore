@@ -3,5 +3,7 @@ Release
 compile
 build
 .vs
+.cache
+
 .svg
 .txt

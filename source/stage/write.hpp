@@ -3,6 +3,8 @@
 
 void run(std::string filename, std::vector<gvec_2f> in_dots, std::vector<gvec_u2ll> in_indxs)
 {
+    if(in_dots.size() < 2) return;
+
         // задаю путь выходного файла
     std::string filepath = dirs::out_path + "\\" + filename + ".constellation.txt";
     std::cout << "writing the converted data in " << filepath << std::endl;

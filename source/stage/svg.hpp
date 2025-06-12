@@ -137,7 +137,7 @@ void path_d_instructions_interpreter(const char _instr, std::vector<double> coor
     gvec_2d _buf_coords;
     unsigned int offset = 0;
     bool nothing_left = false;
-    std::cout << "  " << _instr << ": \n";
+    // std::cout << "  " << _instr << ": \n";
 
 read:
     switch (instr)
@@ -228,20 +228,18 @@ write:
     bool _is_relative = !isupper(_instr);
     if(_is_relative && *found_line)
     {
-        std::cout << "    relative: " << _buf_coords.x << " / " << _buf_coords.y << std::endl;
+        // std::cout << "    relative: " << _buf_coords.x << " / " << _buf_coords.y << std::endl;
         _buf_coords = _buf_coords + out_dots.back();
-        std::cout << "        rel-to-abs: '";
+        // std::cout << "        rel-to-abs: '";
     }
     else
-        std::cout << "    absolute  : '";
+        // std::cout << "    absolute  : '";
 
     out_dots.push_back(_buf_coords);
-    std::cout << _buf_coords.x << "' / '" << _buf_coords.y << "'\n";
+    // std::cout << _buf_coords.x << "' / '" << _buf_coords.y << "'\n";
 
     if(*found_line)
-    {
         out_indx.push_back({(unsigned long long)out_dots.size()-2, (unsigned long long)out_dots.size() - 1});
-    }
     else
         *found_line = true;
     if(instr == 'z')
@@ -285,9 +283,9 @@ bool out_from_line(XMLElement* element)
             (unsigned long long)out_dots.size() - 2,
             (unsigned long long)out_dots.size() - 1
         });
-    std::cout << "    dotNo" << out_indx[out_indx.size() - 1].a << "-dotNo" << out_indx[out_indx.size() - 1].b << ": x: '";
-    std::cout  << out_dots[out_dots.size() - 2 ].x << "' y: '" << out_dots[out_dots.size() - 2 ].y << "' / x: '";
-    std::cout << out_dots.back().x << "' y: '" << out_dots.back().y << std::endl;
+    // std::cout << "    dotNo" << out_indx[out_indx.size() - 1].a << "-dotNo" << out_indx[out_indx.size() - 1].b << ": x: '";
+    // std::cout  << out_dots[out_dots.size() - 2 ].x << "' y: '" << out_dots[out_dots.size() - 2 ].y << "' / x: '";
+    // std::cout << out_dots.back().x << "' y: '" << out_dots.back().y << std::endl;
 
     return found;
 }
@@ -323,9 +321,9 @@ bool out_from_polyline(XMLElement* element)
                 // добавляю индекс в вектор индексов
                 out_indx.push_back({ (unsigned long long)out_dots.size() - 2, (unsigned long long)out_dots.size() - 1 });
                 // вывожу добавленные индекс и точку:
-                std::cout << "    dotNo" << out_indx[out_indx.size() - 1].a << "-dotNo" << out_indx[out_indx.size() - 1].b << ": x: '";
-                std::cout  << out_dots[out_dots.size() - 2 ].x << "' y: '" << out_dots[out_dots.size() - 2 ].y << "' / x: '";
-                std::cout << out_dots.back().x << "' y: '" << out_dots.back().y << std::endl;
+                // std::cout << "    dotNo" << out_indx[out_indx.size() - 1].a << "-dotNo" << out_indx[out_indx.size() - 1].b << ": x: '";
+                // std::cout  << out_dots[out_dots.size() - 2 ].x << "' y: '" << out_dots[out_dots.size() - 2 ].y << "' / x: '";
+                // std::cout << out_dots.back().x << "' y: '" << out_dots.back().y << std::endl;
             }
         }
     }
@@ -355,7 +353,7 @@ bool out_from_path(XMLElement* element)
 
     buf_d_tokens.clear();
 
-    return found;
+    return true;
 }
 
 //         88                                             88  88              

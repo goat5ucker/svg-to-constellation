@@ -69,6 +69,11 @@ int main()
             goto fileprompt;
         }
         std::cin.clear(); std::cin.ignore(32768, '\n');
+
+    for (const auto & entry : std::filesystem::directory_iterator(dirs::in_path))
+    {
+        filelist.push_back(entry.path().string());
+    }
     }
 
     std::cout << "here's three (or less) files i saw there: ";
